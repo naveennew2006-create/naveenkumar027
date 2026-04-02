@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Uber Elite | Organized by Naveen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="video-bg"></div>
+
+    <div class="main-container">
+        <header class="header">
+            <h1 class="typewriter">Uber ride booking made easy and <span>Naveen</span> is organizing it</h1>
+        </header>
+
+        <div class="search-section">
+            <form action="/" method="GET">
+                <input type="text" name="search" placeholder="Search by name or location..." class="search-input">
+                <button type="submit" class="btn-search">Search</button>
+            </form>
+        </div>
+
+        <div class="content-grid">
+            <div class="glass-card">
+                <h2>New Booking</h2>
+                <form action="/insert" method="POST">
+                    <input type="text" name="name" placeholder="Passenger Name" required>
+                    <input type="text" name="mobile" placeholder="Mobile" required>
+                    <input type="number" name="amount" placeholder="Fare (₹)" required>
+                    <input type="text" name="location" placeholder="Destination" required>
+                    <button type="submit" class="btn-primary">Confirm Dispatch</button>
+                </form>
+            </div>
+
+            <div class="glass-card">
+                <h2>Active Trip Log</h2>
+                <table>
+                    <thead>
+                        <tr><th>Passenger</th><th>Fare</th><th>Location</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for row in customers %}
+                        <tr>
+                            <td>{{ row.name }}</td>
+                            <td class="yellow-text">₹{{ row.amount }}</td>
+                            <td>{{ row.location }}</td>
+                            <td>
+                                <button class="btn-edit" onclick="showUpdate('{{row.name}}','{{row.mobile}}','{{row.amount}}','{{row.location}}')">Edit</button>
+                                <a href="/delete/{{row.name}}" class="btn-delete" onclick="return confirm('Cancel Ride?')">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="updateModal" class="modal">
+        <div class="glass-card modal-content">
+            <h2>Update Trip Details</h2>
+            <form action="/update" method="POST">
+                <input type="hidden" name="old_name" id="old_name">
+                <input type="text" name="name" id="up_name" required>
+                <input type="text" name="mobile" id="up_mobile" required>
+                <input type="number" name="amount" id="up_amount" required>
+                <input type="text" name="location" id="up_location" required>
+                <button type="submit" class="btn-primary">Update Booking</button>
+                <button type="button" class="btn-close" onclick="closeUpdate()">Close</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showUpdate(n, m, a, l) {
+            document.getElementById('updateModal').style.display = 'flex';
+            document.getElementById('old_name').value = n;
+            document.getElementById('up_name').value = n;
+            document.getElementById('up_mobile').value = m;
+            document.getElementById('up_amount').value = a;
+            document.getElementById('up_location').value = l;
+        }
+        function closeUpdate() { document.getElementById('updateModal').style.display = 'none'; }
+    </script>
+</body>
+</html>
